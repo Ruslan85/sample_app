@@ -10,7 +10,7 @@ class User < ActiveRecord::Base
                                    dependent:   :destroy
   has_many :followers, through: :reverse_relationships, source: :follower
 
-  before_save { |user| user.email = email.downcase }
+  before_save { email.downcase! }
   before_save :create_remember_token
 
   validates :name,  presence: true, length: { maximum: 50 }
@@ -18,8 +18,8 @@ class User < ActiveRecord::Base
   validates :email,  presence: true,
                     format:     { with: VALID_EMAIL_REGEX },
                     uniqueness: { case_sensitive: false }
-  validates :password,  presence: true, length: { minimum: 6 }
-  validates :password_confirmation, presence: true
+  validates :password, length: { minimum: 6 }
+  validates :password_confirmation,  presence: true
 
   def feed
     Micropost.from_users_followed_by(self)
