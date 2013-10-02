@@ -12,11 +12,10 @@ describe "Authentication" do
     end
 
     describe "should not have show profile and settings in menu" do
-      before { visit signin_path }
 
       it { should_not have_link('Profile',    href: user_path(user)) }
       it { should_not have_link('Settings',   href: edit_user_path(user)) }
-    end
+    end 
 
     describe "signin" do
       before { visit signin_path }
@@ -30,7 +29,7 @@ describe "Authentication" do
         describe "after visiting another page" do
           before { click_link "Home" }
           it { should_not have_selector('div.alert.alert-error') }
-        end
+        end  
       end
 
       describe "with valid information" do
