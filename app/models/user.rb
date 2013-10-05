@@ -1,5 +1,6 @@
 class User < ActiveRecord::Base
   attr_accessible :name, :email, :password, :password_confirmation
+  attr_protected :admin
   has_secure_password
   
   has_many :microposts, dependent: :destroy
@@ -10,7 +11,7 @@ class User < ActiveRecord::Base
                                    dependent:   :destroy
   has_many :followers, through: :reverse_relationships, source: :follower
 
-  before_save { email.downcase! }
+  before_save { self.email.downcase! }
   before_save :create_remember_token
 
   validates :name,  presence: true, length: { maximum: 50 }
@@ -35,6 +36,14 @@ class User < ActiveRecord::Base
 
   def unfollow!(other_user)
     relationships.find_by_followed_id(other_user.id).destroy
+  end
+
+  def self.search(search)
+    if search
+      where 'name LIKE ?', "%#{search}%"
+    else
+      scoped
+    end
   end
 
   private

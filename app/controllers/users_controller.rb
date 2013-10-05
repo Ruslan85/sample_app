@@ -33,9 +33,9 @@ class UsersController < ApplicationController
     end
 
     def index
-      @users = User.paginate(page: params[:page])
+      @users = User.search(params[:search]).paginate(page: params[:page])
     end
-
+   
     def edit
     end
 
@@ -51,20 +51,14 @@ class UsersController < ApplicationController
 
     def destroy
       user = User.find(params[:id])
-      if (current_user == user) && (current_user.admin?)
-        flash[:error] = "Can not delete own admin account!"
-      else
+      if !current_user?(user)
         user.destroy
-        flash[:success] = "User destroyed."
+        flash[:success] = "User destroyed"
+      else
+        flash[:error] = "Can't destroy self"
       end
       redirect_to users_path
     end
-
-   # def signed_in_user_filter
-    #  if signed_in?
-    #    redirect_to root_path, notice: "Already logged in"
-    #  end
-    #end
 
     def following
       @title = "Following"

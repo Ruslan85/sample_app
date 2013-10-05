@@ -20,8 +20,8 @@ describe "Static pages" do
     describe "for signed-in users" do
       let(:user) { FactoryGirl.create(:user) }
       before do
-        FactoryGirl.create(:micropost, user: user, content: "Lorem")
-        FactoryGirl.create(:micropost, user: user, content: "Ipsum")
+        FactoryGirl.create(:micropost, user: user, content: "Lorem ipsum")
+        FactoryGirl.create(:micropost, user: user, content: "Dolor sit amet")
         sign_in user
         visit root_path
       end
@@ -32,6 +32,7 @@ describe "Static pages" do
         end
       end
 
+
       describe "follower/following counts" do
         let(:other_user) { FactoryGirl.create(:user) }
         before do
@@ -41,6 +42,14 @@ describe "Static pages" do
 
         it { should have_link("0 following", href: following_user_path(user)) }
         it { should have_link("1 followers", href: followers_user_path(user)) }
+      end
+
+      describe "pagination" do
+        it "should paginate the feed" do
+          30.times { FactoryGirl.create(:micropost, user: user, content: "Jimmy Carr") }
+          visit root_path
+          page.should have_selector("div.pagination")
+        end
       end
     end
   end
